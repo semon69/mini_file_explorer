@@ -1,0 +1,19 @@
+{
+  "version": 2,
+  "projects": [
+    {
+      "name": "mini-file-explorer-frontend",
+      "rootDirectory": "frontend",
+      "framework": "nextjs"
+    },
+    {
+      "name": "mini-file-explorer-backend",
+      "rootDirectory": "backend",
+      "functions": {
+        "api/**/*.js": {
+          "runtime": "nodejs20.x"
+        }
+      }
+    }
+  ]
+}
