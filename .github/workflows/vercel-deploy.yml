@@ -1,39 +1,57 @@
-name: Deploy to Vercel
+name: Deploy Mini File Explorer to Vercel
 
+# Trigger on push to main or any deploy branch
 on:
   push:
     branches:
-      - main   # or your deploy branch
+      - main
+      - deploy # optional: add your branch
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
+    concurrency:
+      group: deploy
+      cancel-in-progress: true
 
     steps:
-      - name: Checkout code
+      # 1️⃣ Checkout code
+      - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Setup Node
+      # 2️⃣ Setup Node.js
+      - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: 20
 
+      # 3️⃣ Install pnpm
       - name: Install pnpm
         run: npm install -g pnpm
 
-      - name: Install dependencies (frontend)
+      # 4️⃣ Install frontend dependencies
+      - name: Install frontend dependencies
         working-directory: frontend
         run: pnpm install
 
-      - name: Install dependencies (backend)
+      # 5️⃣ Install backend dependencies
+      - name: Install backend dependencies
         working-directory: backend
         run: pnpm install
 
+      # 6️⃣ Build frontend
       - name: Build frontend
         working-directory: frontend
         run: pnpm build
 
-      - name: Deploy to Vercel
+      # 7️⃣ Deploy frontend to Vercel
+      - name: Deploy frontend
         run: |
           npm install -g vercel
-          vercel deploy --prod --token=${{ secrets.VERCEL_TOKEN }}
+          vercel --prod --cwd frontend --token ${{ secrets.VERCEL_TOKEN }}
+
+      # 8️⃣ Deploy backend to Vercel
+      - name: Deploy backend
+        run: |
+          npm install -g vercel
+          vercel --prod --cwd backend --token ${{ secrets.VERCEL_TOKEN }}
