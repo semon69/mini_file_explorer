@@ -14,9 +14,9 @@ export default function Home() {
   }
 
   return (
-    <div className="flex h-screen bg-slate-100 bg-red-500">
+    <div className="flex h-screen bg-slate-100">
       <Sidebar selectedId={selectedId} onSelectItem={setSelectedId} refreshKey={refreshKey} />
-      <MainPanel selectedId={selectedId} onRefresh={handleRefresh} refreshKey={refreshKey} />
+      <MainPanel selectedId={selectedId} onSelectItem={setSelectedId} onRefresh={handleRefresh} refreshKey={refreshKey} />
     </div>
   )
 }

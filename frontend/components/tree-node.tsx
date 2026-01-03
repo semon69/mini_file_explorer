@@ -2,6 +2,7 @@
 
 import { useState } from "react"
 import { ChevronDown, ChevronRight, Folder, FileText, ImageIcon } from "lucide-react"
+import { filesAPI } from "@/lib/api"
 
 interface TreeNodeProps {
   item: any
@@ -11,7 +12,7 @@ interface TreeNodeProps {
 
 export default function TreeNode({ item, isSelected, onSelectItem }: TreeNodeProps) {
   const [isExpanded, setIsExpanded] = useState(false)
-  const [children, setChildren] = useState<any[]>([])
+  const [children, setChildren] = useState<any>([])
   const [childrenLoading, setChildrenLoading] = useState(false)
 
   const handleExpandToggle = async () => {
@@ -20,8 +21,7 @@ export default function TreeNode({ item, isSelected, onSelectItem }: TreeNodePro
     if (!isExpanded) {
       setChildrenLoading(true)
       try {
-        const response = await fetch(`http://localhost:5000/api/files/parent/${item._id}`)
-        const data = await response.json()
+        const data = await filesAPI.getItemsByParentId(item._id)
         setChildren(data)
       } catch (error) {
         console.error("Error fetching children:", error)
@@ -81,7 +81,7 @@ export default function TreeNode({ item, isSelected, onSelectItem }: TreeNodePro
           ) : children.length === 0 ? (
             <div className="text-xs text-gray-400 py-1">Empty folder</div>
           ) : (
-            children.map((child) => (
+            children?.map((child: any) => (
               <TreeNode key={child._id} item={child} isSelected={false} onSelectItem={onSelectItem} />
             ))
           )}

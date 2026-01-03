@@ -1,62 +1,64 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import { X } from "lucide-react"
+import { useState } from "react";
+import { X } from "lucide-react";
+import { filesAPI } from "@/lib/api";
 
 interface RenameModalProps {
-  item: any
-  onClose: () => void
-  onItemRenamed: () => void
+  item: any;
+  onClose: () => void;
+  onItemRenamed: () => void;
 }
 
-export default function RenameModal({ item, onClose, onItemRenamed }: RenameModalProps) {
-  const [name, setName] = useState(item.name)
-  const [loading, setLoading] = useState(false)
-  const [error, setError] = useState("")
+export default function RenameModal({
+  item,
+  onClose,
+  onItemRenamed,
+}: RenameModalProps) {
+  const [name, setName] = useState(item.name);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
 
   const handleRename = async () => {
     if (!name.trim()) {
-      setError("Name is required")
-      return
+      setError("Name is required");
+      return;
     }
 
-    setLoading(true)
-    setError("")
+    setLoading(true);
+    setError("");
 
     try {
-      const response = await fetch(`http://localhost:5000/api/files/${item._id}/rename`, {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name: name.trim() }),
-      })
-
-      if (response.ok) {
-        onItemRenamed()
-      } else {
-        const data = await response.json()
-        setError(data.message || "Failed to rename item")
+      const data: any = await filesAPI.renameItem(item._id, name);
+      if (data._id) {
+        onItemRenamed();
       }
     } catch (err) {
-      setError("An error occurred")
-      console.error(err)
+      setError("An error occurred");
+      console.error(err);
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }
+  };
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
       <div className="bg-white rounded-lg p-6 w-96 shadow-lg">
         <div className="flex items-center justify-between mb-4">
           <h2 className="text-lg font-bold text-gray-900">Rename Item</h2>
-          <button onClick={onClose} className="p-1 hover:bg-gray-100 rounded transition">
+          <button
+            onClick={onClose}
+            className="p-1 hover:bg-gray-100 rounded transition"
+          >
             <X className="w-5 h-5 text-gray-600" />
           </button>
         </div>
 
         <div className="space-y-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Name</label>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Name
+            </label>
             <input
               type="text"
               value={name}
@@ -65,7 +67,11 @@ export default function RenameModal({ item, onClose, onItemRenamed }: RenameModa
             />
           </div>
 
-          {error && <div className="p-2 bg-red-50 border border-red-200 rounded text-sm text-red-600">{error}</div>}
+          {error && (
+            <div className="p-2 bg-red-50 border border-red-200 rounded text-sm text-red-600">
+              {error}
+            </div>
+          )}
 
           <div className="flex gap-2 pt-4">
             <button
@@ -85,5 +91,5 @@ export default function RenameModal({ item, onClose, onItemRenamed }: RenameModa
         </div>
       </div>
     </div>
-  )
+  );
 }

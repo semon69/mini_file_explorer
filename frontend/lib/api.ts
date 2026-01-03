@@ -1,4 +1,4 @@
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000/api"
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL
 
 interface RequestOptions extends RequestInit {
   params?: Record<string, string>
@@ -21,7 +21,6 @@ async function apiCall<T>(endpoint: string, options: RequestOptions = {}): Promi
     },
     ...fetchOptions,
   })
-
   if (!response.ok) {
     const error = await response.json()
     throw new Error(error.message || `API error: ${response.status}`)

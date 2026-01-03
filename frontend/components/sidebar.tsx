@@ -1,42 +1,47 @@
-"use client"
+"use client";
 
-import { useState, useEffect, useCallback } from "react"
-import TreeView from "./tree-view"
-import CreateItemModal from "./modals/create-item-modal"
-import { FolderOpen, Plus } from "lucide-react"
+import { useState, useEffect, useCallback } from "react";
+import TreeView from "./tree-view";
+import CreateItemModal from "./modals/create-item-modal";
+import { FolderOpen, Plus } from "lucide-react";
+import { filesAPI } from "@/lib/api";
 
 interface SidebarProps {
-  selectedId: string | null
-  onSelectItem: (id: string | null) => void
-  refreshKey: number
+  selectedId: string | null;
+  onSelectItem: (id: string | null) => void;
+  refreshKey: number;
 }
 
-export default function Sidebar({ selectedId, onSelectItem, refreshKey }: SidebarProps) {
-  const [items, setItems] = useState<any[]>([])
-  const [loading, setLoading] = useState(true)
-  const [showCreateModal, setShowCreateModal] = useState(false)
+export default function Sidebar({
+  selectedId,
+  onSelectItem,
+  refreshKey,
+}: SidebarProps) {
+  const [items, setItems] = useState<any>([]);
+  const [loading, setLoading] = useState(true);
+  const [showCreateModal, setShowCreateModal] = useState(false);
 
   const fetchRootItems = useCallback(async () => {
-    setLoading(true)
+    setLoading(true);
     try {
-      const response = await fetch("http://localhost:5000/api/files/root")
-      const data = await response.json()
-      setItems(data)
+      const data = await filesAPI.getRootItems();
+      console.log({ data });
+      setItems(data);
     } catch (error) {
-      console.error("Error fetching items:", error)
+      console.error("Error fetching items:", error);
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }, [])
+  }, []);
 
   useEffect(() => {
-    fetchRootItems()
-  }, [fetchRootItems, refreshKey])
+    fetchRootItems();
+  }, [fetchRootItems, refreshKey]);
 
   const handleItemCreated = () => {
-    setShowCreateModal(false)
-    fetchRootItems()
-  }
+    setShowCreateModal(false);
+    fetchRootItems();
+  };
 
   return (
     <div className="w-64 bg-white border-r border-gray-200 flex flex-col">
@@ -61,15 +66,25 @@ export default function Sidebar({ selectedId, onSelectItem, refreshKey }: Sideba
         {loading ? (
           <div className="text-center py-4 text-gray-500">Loading...</div>
         ) : items.length === 0 ? (
-          <div className="text-center py-4 text-gray-500 text-sm">No items yet</div>
+          <div className="text-center py-4 text-gray-500 text-sm">
+            No items yet
+          </div>
         ) : (
-          <TreeView items={items} selectedId={selectedId} onSelectItem={onSelectItem} />
+          <TreeView
+            items={items}
+            selectedId={selectedId}
+            onSelectItem={onSelectItem}
+          />
         )}
       </div>
 
       {showCreateModal && (
-        <CreateItemModal parentId={null} onClose={() => setShowCreateModal(false)} onItemCreated={handleItemCreated} />
+        <CreateItemModal
+          parentId={null}
+          onClose={() => setShowCreateModal(false)}
+          onItemCreated={handleItemCreated}
+        />
       )}
     </div>
-  )
+  );
 }

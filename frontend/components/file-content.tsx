@@ -1,33 +1,37 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import { Edit2, Save, X } from "lucide-react"
+import { useState } from "react";
+import { Edit2, Save, X } from "lucide-react";
+import { filesAPI } from "@/lib/api";
 
 interface FileContentProps {
-  item: any
-  onRefresh: () => void
+  item: any;
+  onSelectItem: any;
+  onRefresh: () => void;
 }
 
-export default function FileContent({ item, onRefresh }: FileContentProps) {
-  const [isEditing, setIsEditing] = useState(false)
-  const [content, setContent] = useState(item.content || "")
+export default function FileContent({ item, onSelectItem, onRefresh }: FileContentProps) {
+  const [isEditing, setIsEditing] = useState(false);
+  const [content, setContent] = useState(item.content || "");
 
   const handleSave = async () => {
     try {
-      const response = await fetch(`http://localhost:5000/api/files/${item._id}/content`, {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ content }),
-      })
+      // const response = await fetch(`http://localhost:5000/api/files/${item._id}/content`, {
+      //   method: "PUT",
+      //   headers: { "Content-Type": "application/json" },
+      //   body: JSON.stringify({ content }),
+      // })
 
-      if (response.ok) {
-        setIsEditing(false)
-        onRefresh()
+      const data: any = await filesAPI.updateFileContent(item._id, content);
+
+      if (data._id) {
+        setIsEditing(false);
+        onRefresh();
       }
     } catch (error) {
-      console.error("Error saving content:", error)
+      console.error("Error saving content:", error);
     }
-  }
+  };
 
   if (item.type === "image") {
     return (
@@ -39,7 +43,7 @@ export default function FileContent({ item, onRefresh }: FileContentProps) {
         />
         <p className="text-sm text-gray-500 mt-4">{item.name}</p>
       </div>
-    )
+    );
   }
 
   return (
@@ -58,8 +62,8 @@ export default function FileContent({ item, onRefresh }: FileContentProps) {
               </button>
               <button
                 onClick={() => {
-                  setIsEditing(false)
-                  setContent(item.content || "")
+                  setIsEditing(false);
+                  setContent(item.content || "");
                 }}
                 className="flex items-center gap-2 bg-gray-400 hover:bg-gray-500 text-white px-3 py-2 rounded font-medium transition"
               >
@@ -91,5 +95,5 @@ export default function FileContent({ item, onRefresh }: FileContentProps) {
         </pre>
       )}
     </div>
-  )
+  );
 }
