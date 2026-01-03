@@ -89,10 +89,12 @@ export default function FolderContent({
           {items?.map((item: any) => (
             <div
               key={item._id}
-              onClick={() => onSelectItem(item._id)}
               className="flex items-center justify-between p-3 border border-gray-200 rounded hover:bg-gray-50 transition"
             >
-              <div className="flex items-center gap-3 flex-1">
+              <div
+                onClick={() => onSelectItem(item._id)}
+                className="flex items-center gap-3 flex-1"
+              >
                 <span className="text-xl">
                   {item.type === "folder"
                     ? "📁"

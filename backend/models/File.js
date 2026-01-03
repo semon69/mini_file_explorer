@@ -8,7 +8,6 @@ const fileSchema = new mongoose.Schema(
       trim: true,
       validate: {
         validator: (v) => {
-          // Prevent invalid file system characters
           return !/[<>:"|?*]/.test(v)
         },
         message: "File name contains invalid characters",

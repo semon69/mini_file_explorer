@@ -90,7 +90,7 @@ export default function MainPanel({
   return (
     <div className="flex-1 bg-white flex flex-col">
       <div className="border-b border-gray-200 p-4">
-        <Breadcrumb path={breadcrumb} />
+        <Breadcrumb path={breadcrumb} onSelectItem={onSelectItem} />
       </div>
 
       <div className="flex-1 overflow-auto">
